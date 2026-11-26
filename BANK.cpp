@@ -1,17 +1,16 @@
 /*
  * ============================================================
- *   BANK MANAGEMENT SYSTEM v2  -  C++ OOP Project (terminal)
+ *   BANK MANAGEMENT SYSTEM  -  C++ OOP Project (terminal)
  * ============================================================
- *  Everything from v1 is still here (accounts, login, deposit,
- *  withdraw, transfer, statement, interest, admin panel, file
- *  saving) PLUS two new features:
- *
- *    NEW 1) FRAUD ALERTS      - every withdrawal / transfer is checked
- *                               by 3 rule classes. Suspicious payments
- *                               are held until the customer confirms.
- *                               (rule based - NOT machine learning)
- *    NEW 2) SPENDING INSIGHTS - each payment has a category; a bar chart
- *                               shows where the money goes.
+ *  Features:
+ *    - Open Savings / Current accounts, PIN login (PIN stored hashed)
+ *    - Deposit, withdraw, transfer, mini statement, account details
+ *    - Monthly interest, close account, admin panel, file saving
+ *    - FRAUD ALERTS      - every withdrawal / transfer is checked by 3 rule
+ *                          classes. Suspicious payments are held until the
+ *                          customer confirms. (rule based, not machine learning)
+ *    - SPENDING INSIGHTS - each payment has a category; a bar chart shows
+ *                          where the money goes.
  *
  *  OOP concepts used (and where to find them):
  *    1. Encapsulation       -> private data in Account, Transaction
@@ -32,7 +31,7 @@
  *                              availableToWithdraw()
  *   11. File handling       -> data saved to bank_data.txt
  *
- *  Compile :  g++ -std=c++11 -Wall -Wextra bank_management_v2.cpp -o bank
+ *  Compile :  g++ -std=c++11 -Wall -Wextra bank_management.cpp -o bank
  *  Run     :  ./bank        (Windows: bank.exe)
  *  Admin password: admin123
  * ============================================================
@@ -415,7 +414,7 @@ public:
 };
 
 // ============================================================
-//  NEW: FRAUD DETECTION - one abstract rule, three real rules
+//  FRAUD DETECTION - one abstract rule, three real rules
 // ============================================================
 class FraudRule {
 public:
@@ -502,7 +501,7 @@ public:
 };
 
 // ============================================================
-//  NEW: SPENDING ANALYZER - totals and bar chart per category
+//  SPENDING ANALYZER - totals and bar chart per category
 // ============================================================
 class SpendingAnalyzer {
 public:
@@ -576,7 +575,7 @@ private:
                     accounts.push_back(move(a));
                     maxNo = max(maxNo, no);
                 } else if (p[0] == "T" && last && p.size() == 5) {
-                    // old v1 record (no time / category): keep it, mark as "Other"
+                    // older record format (no time / category): keep it, mark as "Other"
                     last->loadTransaction(Transaction(p[1], stod(p[2]), stod(p[3]), 0, "Other", ""));
                 } else if (p[0] == "T" && last && p.size() >= 6) {
                     string flag = p.size() >= 7 ? p[6] : "";
@@ -645,7 +644,7 @@ public:
         return nullptr;
     }
 
-    // NEW: ask the detector about a payment before it is made
+    // ask the detector about a payment before it is made
     vector<string> checkPayment(const Account& acc, double amount) const {
         return detector.scan(acc, amount);
     }
@@ -693,7 +692,7 @@ private:
         return CurrentAccount(0, "", "", 0).rulesInfo();
     }
 
-    // ---------- NEW: fraud check shown to the customer ----------
+    // ---------- fraud check shown to the customer ----------
     // returns true if the payment may go ahead; flagReason is stored with the transaction
     bool fraudCheck(const Account& acc, double amount, string& flagReason) {
         flagReason = "";
@@ -829,8 +828,8 @@ private:
             UI::menuItem(3, "Transfer to another account");
             UI::menuItem(4, "Account details");
             UI::menuItem(5, "Mini statement");
-            UI::menuItem(6, "Spending insights          (new)");
-            UI::menuItem(7, "Security alerts            (new)");
+            UI::menuItem(6, "Spending insights");
+            UI::menuItem(7, "Security alerts");
             UI::menuItem(8, "Change PIN");
             UI::menuItem(9, "Close account");
             UI::menuItem(10, "Logout");
@@ -954,8 +953,8 @@ private:
             UI::menuItem(1, "View all accounts");
             UI::menuItem(2, "Apply monthly interest to all accounts");
             UI::menuItem(3, "Bank summary");
-            UI::menuItem(4, "Fraud alert report        (new)");
-            UI::menuItem(5, "Create demo account       (new, PIN 1234)");
+            UI::menuItem(4, "Fraud alert report");
+            UI::menuItem(5, "Create demo account       (PIN 1234)");
             UI::menuItem(6, "Back");
             cout << "\n";
             int ch = Input::integer(" Choice: ", 1, 6);
